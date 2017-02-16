@@ -1,3 +1,5 @@
+'use strict';
+
 const OpenTracker = require('./open-tracker').OpenTracker;
 
 exports.handle = function handle(e, ctx) {
