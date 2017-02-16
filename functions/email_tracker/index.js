@@ -3,9 +3,8 @@ const OpenTracker = require('./open-tracker').OpenTracker;
 exports.handle = function handle(e, ctx) {
   const query = e.queryStringParameters;
   const response = {
-    statusCode: 200,
-    headers: { 'content-type': 'image/gif' },
-    body: 'R0lGODlhAQABAPAAAAAAAAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==',
+    statusCode: 302,
+    headers: { location: 'https://s3.amazonaws.com/s.sumofus.org/pixel.gif' },
   };
 
   const tracker = new OpenTracker();
