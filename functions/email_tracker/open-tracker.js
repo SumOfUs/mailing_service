@@ -56,7 +56,7 @@ exports.OpenTracker = class OpenTracker {
     const time = new Date();
     return this.save(Object.assign({}, item, {
       opens_count: item.opens_count + 1,
-      last_opened_at: (new Date())
+      last_opened_at: time.toISOString(),
     }));
   }
 
