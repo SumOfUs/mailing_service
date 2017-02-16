@@ -41,17 +41,23 @@ exports.OpenTracker = class OpenTracker {
   }
 
   create(params) {
+    const time = new Date();
     return this.save({
       id: `${params.mailing_id}:${params.user_id}`,
       mailing_id: params.mailing_id,
       user_id: params.user_id,
-      first_clicked_at: (new Date()).toISOString(),
-      clicks_count: 0,
+      first_opened_at: time.toISOString(),
+      last_opened_at: time.toISOString(),
+      opens_count: 0,
     });
   }
 
   update(item) {
-    return this.save(Object.assign({}, item, { clicks_count: item.clicks_count + 1 }));
+    const time = new Date();
+    return this.save(Object.assign({}, item, {
+      opens_count: item.opens_count + 1,
+      last_opened_at: (new Date())
+    }));
   }
 
   save(item) {
