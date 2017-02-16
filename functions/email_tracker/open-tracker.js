@@ -5,8 +5,8 @@ const AWS = require('aws-sdk');
 const TABLE_NAME = 'OpenTracking';
 
 exports.OpenTracker = class OpenTracker {
-  constructor() {
-    this.client = new AWS.DynamoDB.DocumentClient();
+  constructor(client) {
+    this.client = client || new AWS.DynamoDB.DocumentClient();
   }
 
   track(params) {
