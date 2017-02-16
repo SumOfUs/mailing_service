@@ -1,0 +1,25 @@
+{
+  "name": "mailing_service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SumOfUs/mailing_service.git"
+  },
+  "author": "SumOfUs",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SumOfUs/mailing_service/issues"
+  },
+  "homepage": "https://github.com/SumOfUs/mailing_service#readme",
+  "devDependencies": {
+    "jest": "^18.1.0"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.14.0"
+  }
+}
