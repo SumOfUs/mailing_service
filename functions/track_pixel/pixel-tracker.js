@@ -2,9 +2,9 @@
 
 const AWS = require('aws-sdk');
 
-const TABLE_NAME = 'OpenTracking';
+const TABLE_NAME = 'PixelTracking';
 
-exports.OpenTracker = class OpenTracker {
+exports.PixelTracker = class PixelTracker {
   constructor(client) {
     this.client = client || new AWS.DynamoDB.DocumentClient();
   }
