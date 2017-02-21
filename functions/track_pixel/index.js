@@ -9,7 +9,10 @@ exports.handle = function handle(e, ctx) {
     headers: { location: 'https://s3.amazonaws.com/s.sumofus.org/pixel.gif' },
   };
 
+  if (!query) return ctx.succeed(response);
+
   const tracker = ctx.tracker || new PixelTracker();
+
   tracker.track({ mailing_id: query.mailing_id, user_id: query.user_id })
     .then((data) => {
       console.log('Successfully tracked:', query, data);
