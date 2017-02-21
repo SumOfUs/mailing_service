@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "lint": "eslint ."
   },
   "repository": {
     "type": "git",
@@ -17,6 +18,7 @@
   },
   "homepage": "https://github.com/SumOfUs/mailing_service#readme",
   "devDependencies": {
+    "eslint": "^3.16.0",
     "jest": "^18.1.0"
   },
   "dependencies": {

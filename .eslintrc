@@ -1,0 +1,27 @@
+{
+  "env": {
+    "es6": true,
+    "node": true,
+    "jest": true
+  },
+  "rules": {
+    "semi": "error",
+    "strict": 0,
+    "no-debugger": "error",
+    "no-alert": "error",
+    "no-obj-calls": "error",
+    "no-unreachable": "error",
+    "no-console": "warn",
+    "valid-typeof": "error",
+    "eqeqeq": ["error", "always", {"null": "ignore"}],
+    "no-var": "error",
+    "default-case": "error",
+    "class-methods-use-this": "error",
+    "no-else-return": "error",
+    "no-const-assign": "error",
+    "arrow-body-style":  ["error", "as-needed"],
+    "no-useless-constructor": "error",
+    "prefer-const": "error",
+    "object-shorthand": "error"
+  }
+}
