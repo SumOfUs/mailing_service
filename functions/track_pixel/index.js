@@ -9,7 +9,14 @@ exports.handle = function handle(e, ctx) {
     headers: { location: 'https://s3.amazonaws.com/s.sumofus.org/pixel.gif' },
   };
 
-  if (!query) return ctx.succeed(response);
+  const stageVars = e.stageVariables;
+  console.log('stage variables:', stageVars);
+
+  if (!query) {
+    console.log('Could not read query parameters. Exiting...');
+    ctx.succeed(response);
+    return;
+  };
 
   const tracker = ctx.tracker || new PixelTracker();
 
