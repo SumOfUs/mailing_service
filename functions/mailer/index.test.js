@@ -1,4 +1,4 @@
-const { deliverEmail, hasRequiredParams } = require('./index.js');
+const { deliverEmail, hasRequiredParams, catchUrls } = require('./index.js');
 
 test('Sends email with correct message params', () => {
   const emailOpts = {
@@ -34,9 +34,17 @@ test('Sends email with correct message params', () => {
   expect(sender.mock.calls[0][0]).toEqual(expectedArgs);
 });
 
+describe('URL Catcher', () => {
+  it('prepends urls', () => {
+    const text = "hello, <a href='http://foo.org'>world!</a>";
+    const expected = "hello, <a href=\"https://example.com?url=http://foo.org\">world!</a>";
+
+    expect(catchUrls(text, 'https://example.com')).toEqual(expected);
+  });
+});
+
 
 describe('Checks record has required params', () => {
-
   it('is false for an invalid record', () => {
 
     const invalidRecord = {
@@ -50,12 +58,14 @@ describe('Checks record has required params', () => {
   it('is false for an invalid record', () => {
 
     const validRecord = {
-      To: 'foo',
-      Subject: 'bar',
+      ToEmail: 'foo',
+      ToName: 'bar',
+      FromEmail: 'foo',
+      FromName: 'bar',
+      Subject: 'foo',
       Body: 'body',
       UserId: '1',
       MailingId: '2',
-      From: 'from',
     };
 
     expect(hasRequiredParams(validRecord)).toBe(true);

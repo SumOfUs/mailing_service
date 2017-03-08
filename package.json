@@ -23,6 +23,8 @@
   },
   "dependencies": {
     "aws-sdk": "^2.14.0",
+    "cheerio": "^0.22.0",
+    "href-replace": "^1.0.0",
     "lodash": "^4.17.4"
   }
 }
