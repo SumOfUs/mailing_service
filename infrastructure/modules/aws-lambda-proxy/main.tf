@@ -1,7 +1,7 @@
 resource "aws_api_gateway_resource" "lambda_proxy_resource" {
   rest_api_id = "${var.rest_api_id}"
   parent_id   = "${var.parent_id}"
-  path_part   = "pixel"
+  path_part   = "${var.path_part}"
 }
 
 resource "aws_api_gateway_method" "lambda_proxy_method" {

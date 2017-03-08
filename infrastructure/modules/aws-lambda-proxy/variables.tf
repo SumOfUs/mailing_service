@@ -10,6 +10,10 @@ variable "http_method" {
   default = "GET"
 }
 
+# Path part. (required)
+# It will be nested under parent's path, starting at `/`
+variable "path_part" {}
+
 # Name of Lambda function (required)
 variable "lambda_name" {}
 
