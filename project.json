@@ -4,5 +4,6 @@
   "memory": 128,
   "timeout": 5,
   "role": "arn:aws:iam::108409592308:role/mailing-service_lambda_function",
-  "environment": {}
+  "environment": {},
+  "defaultEnvironment": "dev"
 }
