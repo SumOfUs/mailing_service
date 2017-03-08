@@ -30,7 +30,13 @@ resource "aws_lambda_permission" "AllowExecutionFromAPIGateway" {
 }
 
 resource "aws_api_gateway_deployment" "lambda_proxy_deployment" {
-  depends_on  = ["aws_api_gateway_method.lambda_proxy_method"]
+  depends_on = [
+    "aws_api_gateway_resource.lambda_proxy_resource",
+    "aws_api_gateway_method.lambda_proxy_method",
+    "aws_api_gateway_integration.lambda_proxy_integration",
+    "aws_lambda_permission.AllowExecutionFromAPIGateway",
+  ]
+
   rest_api_id = "${var.rest_api_id}"
   stage_name  = "${var.stage}"
 }
