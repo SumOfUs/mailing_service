@@ -10,6 +10,10 @@ resource "aws_api_gateway_method" "lambda_proxy_method" {
   http_method        = "${var.http_method}"
   authorization      = "NONE"
   request_parameters = "${var.request_parameters}"
+
+  depends_on = [
+    "aws_api_gateway_resource.lambda_proxy_resource",
+  ]
 }
 
 resource "aws_api_gateway_integration" "lambda_proxy_integration" {
@@ -19,6 +23,10 @@ resource "aws_api_gateway_integration" "lambda_proxy_integration" {
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
   uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/${var.lambda_name}/invocations"
+
+  depends_on = [
+    "aws_api_gateway_method.lambda_proxy_method",
+  ]
 }
 
 resource "aws_lambda_permission" "AllowExecutionFromAPIGateway" {
@@ -30,13 +38,10 @@ resource "aws_lambda_permission" "AllowExecutionFromAPIGateway" {
 }
 
 resource "aws_api_gateway_deployment" "lambda_proxy_deployment" {
-  depends_on = [
-    "aws_api_gateway_resource.lambda_proxy_resource",
-    "aws_api_gateway_method.lambda_proxy_method",
-    "aws_api_gateway_integration.lambda_proxy_integration",
-    "aws_lambda_permission.AllowExecutionFromAPIGateway",
-  ]
-
   rest_api_id = "${var.rest_api_id}"
   stage_name  = "${var.stage}"
+
+  depends_on = [
+    "aws_api_gateway_integration.lambda_proxy_integration",
+  ]
 }
