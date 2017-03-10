@@ -48,7 +48,7 @@ exports.PixelTracker = class PixelTracker {
       user_id: params.user_id,
       first_opened_at: time.toISOString(),
       last_opened_at: time.toISOString(),
-      opens_count: 0,
+      opens_count: 1,
     });
   }
 

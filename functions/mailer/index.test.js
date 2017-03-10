@@ -6,7 +6,7 @@ test('Sends email with correct message params', () => {
     user_id: '1234',
     mailing_id: 'abcd',
     subject: 'Hello',
-    body: 'World',
+    body: "Hello, <a href='http://example.com'>click here</a>",
     from: 'Bob <from@example.com>',
   }
 
@@ -17,7 +17,7 @@ test('Sends email with correct message params', () => {
     Message: {
       Body: {
         Html: {
-          Data: "World <img src=\"https://ijjawanzea.execute-api.us-west-2.amazonaws.com/prod/track?mailing_id=abcd&user_id=1234\" />"
+          Data: "Hello, <a href='http://example.com'>click here</a><img src=\"https://jeaipw2gm6.execute-api.us-west-2.amazonaws.com/dev/pixel?mailing_id=abcd&user_id=1234\" />",
         },
       },
       Subject: {

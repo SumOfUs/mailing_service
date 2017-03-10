@@ -6,21 +6,22 @@ const cheerio = require('cheerio');
 
 AWS.config.update({region: 'us-west-2'});
 
-const appendPixel = (opts) => {
-  const host = "https://ijjawanzea.execute-api.us-west-2.amazonaws.com/prod/track";
-  const pixel = `<img src="${host}?mailing_id=${opts.mailing_id}&user_id=${opts.user_id}" />`;
+// Move values to ENV
+const pixelTrackingHost = "https://jeaipw2gm6.execute-api.us-west-2.amazonaws.com/dev/pixel";
+const urlTrackingHost = "https://jeaipw2gm6.execute-api.us-west-2.amazonaws.com/dev/urltrack";
 
+const appendPixel = (body, opts, host) => {
+  const pixelImage = `<img src="${host}?mailing_id=${opts.mailing_id}&user_id=${opts.user_id}" />`;
 
-  return `${opts.body} ${pixel}`;
+  return `${body} ${pixelImage}`;
 };
 
-
-const catchUrls = (text, url) => {
-  const $ = cheerio.load(text);
+const catchUrls = (body, opts, host) => {
+  const $ = cheerio.load(body);
 
   $('a').each((i, anchor) => {
-    const current = $(anchor).attr('href');
-    $(anchor).attr('href', `${url}?url=${current}`);
+    const current = encodeURIComponent($(anchor).attr('href'));
+    $(anchor).attr('href', `${host}?url=${current}&mailing_id=${opts.mailing_id}&user_id=${opts.user_id}`);
   });
 
   return $.html();
@@ -33,7 +34,22 @@ const send = (params, sender) => {
     if (err) console.log(err, err.stack); // an error occurred
     else     console.log(data);           // successful response
   });
-}
+};
+
+const insertSalutations = (body, opts) => {
+  body = `<p>Dear ${opts.toName},</p>${body}<p>Regards,<br/>${opts.fromName}</p>`
+  return body;
+};
+
+const setupBody = (opts) => {
+  let body = opts.body;
+
+  body = catchUrls(body, opts, urlTrackingHost);
+  body = insertSalutations(body, opts);
+  body = appendPixel(body, opts, pixelTrackingHost);
+
+  return body;
+};
 
 const deliverEmail = (opts, sender) => {
   sender = (typeof sender !== 'undefined') ?  sender : new AWS.SES();
@@ -45,14 +61,15 @@ const deliverEmail = (opts, sender) => {
     Message: {
       Body: {
         Html: {
-          Data: appendPixel(opts)
+          Data: setupBody(opts)
         },
       },
       Subject: {
         Data: opts.subject
       }
    },
-   Source: opts.from
+   Source: opts.from,
+   ReplyToAddresses: opts.replyToAddresses,
   };
 
   send(params, sender);
@@ -78,12 +95,16 @@ exports.handle = (event, context, callback) => {
     if(hasRequiredParams(data)) {
       opts = {
         to: `${data.ToName.S} <${data.ToEmail.S}>`,
-        from: `${data.FromName.S} <${data.FromEmail.S}>`,
+        toName: data.ToName.S,
+        from: `${data.FromName.S} <omar@sumofus.org>`,
+        fromName: data.FromName.S,
+        replyToAddresses: [`${data.FromName.S} <${data.FromEmail.S}>`, "SumOfUs <omar@sumofus.org>"],
         user_id: data.UserId.S,
         mailing_id: data.MailingId.S,
         subject: data.Subject.S,
         body: data.Body.S,
       };
+
       console.log(JSON.stringify(opts));
       deliverEmail(opts);
     }

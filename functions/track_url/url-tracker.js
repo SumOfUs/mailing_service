@@ -4,7 +4,7 @@ const AWS = require('aws-sdk');
 
 const TABLE_NAME = 'UrlTracking';
 
-exports.OpenTracker = class OpenTracker {
+exports.UrlTracker = class UrlTracker {
   constructor(client) {
     this.client = client || new AWS.DynamoDB.DocumentClient();
   }
@@ -18,7 +18,7 @@ exports.OpenTracker = class OpenTracker {
       TableName: TABLE_NAME,
       KeyConditionExpression: 'id = :id',
       ExpressionAttributeValues: {
-        ':id': `${params.mailing_id}:${params.user_id}`,
+        ':id': `${params.mailing_id}:${params.user_id}:${params.url}`,
       },
     };
 
@@ -43,13 +43,13 @@ exports.OpenTracker = class OpenTracker {
   create(params) {
     const time = new Date();
     return this.save({
-      id: `${params.mailing_id}:${params.user_id}`,
+      id: `${params.mailing_id}:${params.user_id}:${params.url}`,
       mailing_id: params.mailing_id,
       user_id: params.user_id,
       url:  params.url,
       first_clicked_at: time.toISOString(),
       last_clicked_at: time.toISOString(),
-      clicks_count: 0,
+      clicks_count: 1,
     });
   }
 
@@ -57,7 +57,7 @@ exports.OpenTracker = class OpenTracker {
     const time = new Date();
     return this.save(Object.assign({}, item, {
       clicks_count: item.clicks_count + 1,
-      last_opened_at: time.toISOString(),
+      last_clicked_at: time.toISOString(),
     }));
   }
 
