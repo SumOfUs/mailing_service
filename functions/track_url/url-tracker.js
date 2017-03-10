@@ -4,7 +4,7 @@ const AWS = require('aws-sdk');
 
 const TABLE_NAME = 'UrlTracking';
 
-exports.OpenTracker = class OpenTracker {
+exports.UrlTracker = class UrlTracker {
   constructor(client) {
     this.client = client || new AWS.DynamoDB.DocumentClient();
   }

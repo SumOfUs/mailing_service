@@ -10,7 +10,7 @@ exports.handle = function handle(e, ctx) {
   };
 
   const tracker = ctx.tracker || new UrlTracker();
-  tracker.track({ mailing_id: query.mailing_id, user_id: query.user_id })
+  tracker.track({ mailing_id: query.mailing_id, user_id: query.user_id, url: query.url })
     .then((data) => console.log('Successfully tracked url:', query, data),
       (error) => console.log('there was an error:', error, query))
     .then(() => ctx.succeed(response));

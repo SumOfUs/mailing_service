@@ -48,11 +48,8 @@ const deliverEmail = (opts, sender) => {
 exports.deliverEmail = deliverEmail;
 
 const hasRequiredParams = (record) => {
-  console.log("has required param?", JSON.stringify(record));
   const requiredParams = ['To', 'UserId', 'MailingId', 'Subject', 'Body', 'From'];
   const passedParams = record ? Object.keys(record) : [];
-  console.log("WHERE WHERE WHERE");
-  console.log("passedParams", passedParams);
   return isEqual(requiredParams.sort(), passedParams.sort());
 };
 
@@ -62,9 +59,7 @@ exports.handle = (event, context, callback) => {
   let opts, data, params;
 
   event.Records.forEach( (record) => {
-    console.log(record.dynamodb, "OMAR OMAR");
     data = record.dynamodb.NewImage;
-    console.log("RAW", JSON.stringify(record));
 
     if(hasRequiredParams(data)) {
       opts = {
