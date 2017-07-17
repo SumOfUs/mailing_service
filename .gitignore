@@ -1,4 +1,5 @@
 .envrc
+.DS_Store
 .vscode
 node_modules
 infrastructure/dev/.terraform/modules/

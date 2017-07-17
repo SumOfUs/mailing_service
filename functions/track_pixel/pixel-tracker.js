@@ -9,8 +9,8 @@ exports.PixelTracker = class PixelTracker {
     this.client = client || new AWS.DynamoDB.DocumentClient();
   }
 
-  track(params) {
-    return this.find(params).then(item => this.createOrUpdate(item, params));
+  track(params, ip) {
+    return this.find(params).then(item => this.createOrUpdate(item, params, ip));
   }
 
   find(params) {
@@ -35,12 +35,12 @@ exports.PixelTracker = class PixelTracker {
     });
   }
 
-  createOrUpdate(item, params) {
-    if (item) return this.update(item);
-    return this.create(params);
+  createOrUpdate(item, params, ip) {
+    if (item) return this.update(item, ip);
+    return this.create(params, ip);
   }
 
-  create(params) {
+  create(params, ip) {
     const time = new Date();
     return this.save({
       id: `${params.mailing_id}:${params.user_id}`,
@@ -49,14 +49,16 @@ exports.PixelTracker = class PixelTracker {
       first_opened_at: time.toISOString(),
       last_opened_at: time.toISOString(),
       opens_count: 1,
+      ip: [ip],
     });
   }
 
-  update(item) {
+  update(item, ip) {
     const time = new Date();
     return this.save(Object.assign({}, item, {
       opens_count: item.opens_count + 1,
       last_opened_at: time.toISOString(),
+      ip: item.ip.push(ip),
     }));
   }
 

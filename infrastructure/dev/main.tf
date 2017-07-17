@@ -44,5 +44,6 @@ module "track_url_lambda_proxy" {
     "method.request.querystring.user_id"    = true
     "method.request.querystring.mailing_id" = true
     "method.request.querystring.url"        = true
+    "integration.request.ip"                = "context.identity.sourceIp"
   }
 }

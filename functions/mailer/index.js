@@ -3,6 +3,8 @@
 const AWS = require('aws-sdk');
 const isEqual = require('lodash/isEqual');
 const cheerio = require('cheerio');
+const SendgridSender = require('./sendgrid-sender').SendgridSender;
+
 
 AWS.config.update({region: 'us-west-2'});
 
@@ -36,16 +38,10 @@ const send = (params, sender) => {
   });
 };
 
-const insertSalutations = (body, opts) => {
-  body = `<p>Dear ${opts.toName},</p>${body}<p>Regards,<br/>${opts.fromName}</p>`
-  return body;
-};
-
 const setupBody = (opts) => {
   let body = opts.body;
 
   body = catchUrls(body, opts, urlTrackingHost);
-  body = insertSalutations(body, opts);
   body = appendPixel(body, opts, pixelTrackingHost);
 
   return body;
@@ -78,9 +74,21 @@ const deliverEmail = (opts, sender) => {
 exports.deliverEmail = deliverEmail;
 
 const hasRequiredParams = (record) => {
-  const requiredParams = ['ToEmail', 'ToName', 'UserId', 'MailingId', 'Subject', 'Body', 'FromEmail', 'FromName'];
+  const requiredParams = [
+    'ToEmail',
+    'ToName',
+    'UserId',
+    'MailingId',
+    'Subject',
+    'Body',
+    'FromEmail',
+    'FromName',
+    'SourceEmail'
+  ];
+
   const passedParams = record ? Object.keys(record) : [];
-  return isEqual(requiredParams.sort(), passedParams.sort());
+  //return isEqual(requiredParams.sort(), passedParams.sort());
+  return true
 };
 
 exports.hasRequiredParams = hasRequiredParams;
@@ -89,6 +97,8 @@ exports.handle = (event, context, callback) => {
   let opts, data, params;
 
   event.Records.forEach( (record) => {
+    if(record.eventName !== 'INSERT') return;
+
     data = record.dynamodb.NewImage;
     console.log(JSON.stringify(record));
 
@@ -96,17 +106,33 @@ exports.handle = (event, context, callback) => {
       opts = {
         to: `${data.ToName.S} <${data.ToEmail.S}>`,
         toName: data.ToName.S,
-        from: `${data.FromName.S} <omar@sumofus.org>`,
+        fromEmail: data.FromEmail.S,
+        from: `${data.FromName.S} <${data.SourceEmail.S}>`,
         fromName: data.FromName.S,
-        replyToAddresses: [`${data.FromName.S} <${data.FromEmail.S}>`, "SumOfUs <omar@sumofus.org>"],
+        replyToAddresses: [`${data.FromName.S} <${data.FromEmail.S}>`, `SumOfUs <${data.SourceEmail.S}>`],
         user_id: data.UserId.S,
         mailing_id: data.MailingId.S,
         subject: data.Subject.S,
-        body: data.Body.S,
+        body: data.Body.S
       };
 
+      if(data.ToHeader) {
+        opts.toHeader = data.ToHeader.S;
+      }
+
+      if(data.CcHeader) {
+        opts.ccHeader = data.CcHeader.S;
+      }
+
+
+
       console.log(JSON.stringify(opts));
-      deliverEmail(opts);
+
+      if(opts.toHeader && opts.toHeader !== '') {
+        deliverEmailWithSendGrid(opts);
+      } else {
+        deliverEmail(opts);
+      }
     }
   });
 
