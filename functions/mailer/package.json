@@ -3,5 +3,8 @@
     "cheerio": "^0.22.0",
     "lodash": "^4.17.4",
     "sendgrid": "^5.1.1"
+  },
+  "scripts": {
+    "test": "jest"
   }
 }

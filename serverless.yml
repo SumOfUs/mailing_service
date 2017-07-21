@@ -1,0 +1,58 @@
+service: mailingService
+
+frameworkVersion: ">=1.17.0 <2.0.0"
+
+provider:
+  name: aws
+  stage: dev
+  region: us-west-2
+  runtime: nodejs6.10
+  memorySize: 128
+  environment:
+    DYNAMODB_TABLE: ${self:service}Emails-${opt:stage, self:provider.stage}
+    SENDGRID_API_KEY: ${opt:sendgrid_api_key}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+
+functions:
+  mailer:
+    handler: functions/mail/index.handler
+    events:
+      - stream:
+          type: dynamodb
+          arn:
+            Fn::GetAtt:
+              - EmailsTable
+              - StreamArn
+          batchSize: 100
+          startingPosition: LATEST
+
+resources:
+  Resources:
+    EmailsTable:
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: mailing_id
+            AttributeType: S
+          - AttributeName: member_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: mailing_id
+            KeyType: HASH
+          - AttributeName: member_id
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        StreamSpecification:
+          StreamViewType: NEW_IMAGE
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}
