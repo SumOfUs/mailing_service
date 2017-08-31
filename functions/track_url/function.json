@@ -1,7 +1,0 @@
-{
-  "description": "Track URLs",
-  "runtime": "nodejs4.3",
-  "memory": 128,
-  "timeout": 2,
-  "role": "arn:aws:iam::108409592308:role/mailing-service_lambda_function"
-}

@@ -1,31 +1,32 @@
 'use strict';
 
-const PixelTracker = require('./pixel-tracker').PixelTracker;
+const hash = require('../../lib/hash')
+const store = require('./store');
 
-exports.handle = function handle(e, ctx) {
-  const query = e.queryStringParameters;
+const trackerValid = (email, expected) => {
+  return expected === hash(email, process.env.TRACKER_SECRET);
+}
+
+exports.handler = function handle(event, context, callback) {
+  const query = event.queryStringParameters;
+
   const response = {
     statusCode: 302,
     headers: { location: 'https://s3.amazonaws.com/s.sumofus.org/pixel.gif' },
   };
 
-  const stageVars = e.stageVariables;
-  console.log('stage variables:', stageVars);
-
   if (!query) {
-    console.log('Could not read query parameters. Exiting...');
-    ctx.succeed(response);
-    return;
-  };
+    console.log('Could not read query parameters.')
+  }
 
-  const tracker = ctx.tracker || new PixelTracker();
+  const { mailing_id, email, id } = query || {};
 
-  tracker.track({ mailing_id: query.mailing_id, user_id: query.user_id })
-    .then((data) => {
-      console.log('Successfully tracked:', query, data);
-      ctx.succeed(response);
-    }, (error) => {
-      console.log('there was an error:', error, query);
-      ctx.succeed(response);
-    });
+  if( !trackerValid(email, id) ) {
+    console.log('Invalid ID');
+  } else {
+    store(id, mailing_id);
+  }
+
+  // Return 302 no matter
+  callback(null, response);
 };

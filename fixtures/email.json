@@ -1,0 +1,51 @@
+{
+  "Records": [
+    {
+      "eventID": "1",
+      "eventVersion": "1.0",
+      "dynamodb": {
+        "Keys": {
+          "Id": {
+            "N": "101"
+          }
+        },
+        "NewImage": {
+          "id": {
+            "S": "ddb2313712cee777907a47a3d986a35cd1f1829e1610d4260c6ae1381260e9ff"
+          },
+          "toEmailAddresses": {
+            "S": "omar@sumofus.org"
+          },
+          "ccEmailAddressesX": {
+            "S": "osahyoun@gmail.com"
+          },
+          "fromEmailAddress": {
+            "S": "Neal <neal@sumofus.org>"
+          },
+          "fromName": {
+            "S": "Neal"
+          },
+          "body": {
+            "S": "Hello World!\n Your friend, Neal"
+          },
+          "subject": {
+            "S": "Hello world"
+          },
+          "mailing_id": {
+            "S": "2"
+          },
+          "id": {
+            "S": ""
+          }
+        },
+        "StreamViewType": "NEW_AND_OLD_IMAGES",
+        "SequenceNumber": "111",
+        "SizeBytes": 26
+      },
+      "awsRegion": "us-west-2",
+      "eventName": "INSERT",
+      "eventSourceARN": "arn:aws:dynamodb:us-west-2:account-id:table/ExampleTableWithStream/stream/2015-06-27T00:48:05.899",
+      "eventSource": "aws:dynamodb"
+    }
+  ]
+}
