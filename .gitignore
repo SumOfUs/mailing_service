@@ -1,4 +1,3 @@
-.envrc
-.vscode
 node_modules
-infrastructure/dev/.terraform/modules/
+.serverless
+.DS_Store

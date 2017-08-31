@@ -1,0 +1,95 @@
+service: MailingService
+
+frameworkVersion: ">=1.17.0 <2.0.0"
+
+provider:
+  name: aws
+  stage: dev
+  region: us-west-2
+  runtime: nodejs6.10
+  memorySize: 128
+  environment:
+    MAILINGS_TABLE: ${self:service}-Mailings-${opt:stage, self:provider.stage}
+    OPEN_TRACKING_TABLE: ${self:service}-OpenTracking-${opt:stage, self:provider.stage}
+    SENDGRID_API_KEY: ${opt:sendgrid_api_key}
+    REGION: ${opt:aws_region, self:provider.region}
+    PIXEL_URL:
+      Fn::Join:
+        - ""
+        - - "https://"
+          - "Ref" : "ApiGatewayRestApi"
+          - ".execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/mailer/track"
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:GetItem
+        - dynamodb:UpdateItem
+      Resource:
+        - "arn:aws:dynamodb:*:*:table/${self:provider.environment.MAILINGS_TABLE}"
+        - "arn:aws:dynamodb:*:*:table/${self:provider.environment.OPEN_TRACKING_TABLE}"
+functions:
+  pixelTracker:
+    handler: functions/track_pixel/index.handler
+    environment:
+      TRACKER_SECRET: ${opt:tracker_secret}
+    events:
+      - http:
+          cors: true
+          method: GET
+          path: /mailer/track
+
+  mailer:
+    handler: functions/mail/index.handler
+    events:
+      - stream:
+          type: dynamodb
+          arn:
+            Fn::GetAtt:
+              - MailingsTable
+              - StreamArn
+          batchSize: 10
+          startingPosition: LATEST
+
+resources:
+  Resources:
+    MailingsTable:
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: mailing_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+          - AttributeName: mailing_id
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        StreamSpecification:
+          StreamViewType: NEW_IMAGE
+        TableName: ${self:provider.environment.MAILINGS_TABLE}
+
+    OpenTrackingTable:
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: mailing_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+          - AttributeName: mailing_id
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        StreamSpecification:
+          StreamViewType: NEW_IMAGE
+        TableName: ${self:provider.environment.OPEN_TRACKING_TABLE}

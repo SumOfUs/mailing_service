@@ -1,7 +1,0 @@
-{
-  "description": "Deliver emails through SES",
-  "runtime": "nodejs4.3",
-  "memory": 128,
-  "timeout": 5,
-  "role": "arn:aws:iam::108409592308:role/lambda-dynamodb-execution-role"
-}
