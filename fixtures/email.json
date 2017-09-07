@@ -10,32 +10,26 @@
           }
         },
         "NewImage": {
-          "id": {
-            "S": "ddb2313712cee777907a47a3d986a35cd1f1829e1610d4260c6ae1381260e9ff"
-          },
-          "toEmailAddresses": {
+          "ToEmails": {
             "S": "omar@sumofus.org"
           },
-          "ccEmailAddressesX": {
-            "S": "osahyoun@gmail.com"
-          },
-          "fromEmailAddress": {
+          "FromEmail": {
             "S": "Neal <neal@sumofus.org>"
           },
-          "fromName": {
+          "FromName": {
             "S": "Neal"
           },
-          "body": {
+          "Body": {
             "S": "Hello World!\n Your friend, Neal"
           },
-          "subject": {
+          "Subject": {
             "S": "Hello world"
           },
-          "mailing_id": {
-            "S": "2"
+          "MailingId": {
+            "S": "xxxyyy"
           },
-          "id": {
-            "S": ""
+          "UserId": {
+            "S": "omar@sumofus.org:1234"
           }
         },
         "StreamViewType": "NEW_AND_OLD_IMAGES",

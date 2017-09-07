@@ -1,4 +1,4 @@
-service: MailingService
+service: EmailService
 
 frameworkVersion: ">=1.17.0 <2.0.0"
 
@@ -32,8 +32,6 @@ provider:
 functions:
   pixelTracker:
     handler: functions/track_pixel/index.handler
-    environment:
-      TRACKER_SECRET: ${opt:tracker_secret}
     events:
       - http:
           cors: true
@@ -58,14 +56,14 @@ resources:
       Type: 'AWS::DynamoDB::Table'
       Properties:
         AttributeDefinitions:
-          - AttributeName: id
+          - AttributeName: MailingId
             AttributeType: S
-          - AttributeName: mailing_id
+          - AttributeName: UserId
             AttributeType: S
         KeySchema:
-          - AttributeName: id
+          - AttributeName: MailingId
             KeyType: HASH
-          - AttributeName: mailing_id
+          - AttributeName: UserId
             KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
