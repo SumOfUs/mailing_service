@@ -19,21 +19,12 @@ const processRecords = (events) => {
   events.forEach( (record) => {
     if(record.eventName !== 'INSERT') return;
     let data = record.dynamodb.NewImage;
-    if(!data.Subject) return;
-    console.log(JSON.stringify(record, null, 6));
 
-    // MailingId: "#{opts[:page_slug]}:#{Time.now.to_i}",
-    //                          UserId: opts[:from_email],
-    //                          Body: simple_format(opts[:body]),
-    //                          Subject: opts[:subject],
-    //                          ToEmails: opts[:to_emails],
-    //                          FromName: opts[:from_name],
-    //                          FromEmail: opts[:from_email],
-    //                          ReplyTo: opts[:reply_to],
+    console.log(JSON.stringify(record, null, 6));
 
     let emailOptions = {
       body: data.Body.S,
-      subject: data.Subject.S,
+      subject: (data.Subject || {}).S,
       toEmailAddresses: data.ToEmails.S,
       ccEmailAddresses: (data.CCEmails || {}).S,
       fromEmailAddress: data.FromEmail.S,
