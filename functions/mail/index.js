@@ -3,15 +3,19 @@
 const builder = require('./email_options_builder');
 const sendgrid = require('sendgrid')(process.env.SENDGRID_API_KEY);
 
+const json = (data) => {
+  JSON.stringify(data, null, 2)
+};
+
 const sendEmail = (opts) => {
   let options = builder(opts);
   let req = sendgrid.emptyRequest(options);
 
   sendgrid.API(req).
     then((response) => {
-      console.log('SENDGRID::SUCCESS', response, options);
+      console.log('SENDGRID::SUCCESS', json(response), json(options));
     }).catch((err) => {
-      console.log('SENGRID::ERROR', JSON.stringify(err, null, 2), options);
+      console.log('SENDGRID::ERROR', json(err), json(options));
     });
 };
 
