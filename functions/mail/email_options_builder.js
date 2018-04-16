@@ -1,17 +1,8 @@
 'use strict';
 
-const appendPixel = require('./pixel_appender');
 const parseEmails = require('../../lib/parse_emails');
 
-
 const emailOptionsBuilder = (opts) => {
-
-  const body = appendPixel(opts.body, {
-    mailing_id: opts.mailing_id,
-    id: opts.id,
-    email: opts.fromEmailAddress,
-  });
-
   const cc = parseEmails(opts.ccEmailAddresses);
 
   let personalizations = {
@@ -27,6 +18,7 @@ const emailOptionsBuilder = (opts) => {
     method: 'POST',
     path: '/v3/mail/send',
     body: {
+      categories: [opts.page],
       personalizations: [personalizations],
       from: {
         email: opts.fromEmailAddress,
@@ -35,7 +27,7 @@ const emailOptionsBuilder = (opts) => {
       content: [
         {
           type: 'text/html',
-          value: body,
+          value: opts.body,
         }
       ]
     }
