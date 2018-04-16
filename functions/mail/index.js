@@ -24,8 +24,6 @@ const processRecords = (events) => {
     if(record.eventName !== 'INSERT') return;
     let data = record.dynamodb.NewImage;
 
-    console.log(JSON.stringify(record, null, 6));
-
     let emailOptions = {
       body: data.Body.S,
       subject: (data.Subject || {}).S,
@@ -33,6 +31,7 @@ const processRecords = (events) => {
       ccEmailAddresses: (data.CCEmails || {}).S,
       fromEmailAddress: data.FromEmail.S,
       fromName: data.FromName.S,
+      page: data.MailingId.S.split(':')[0],
     };
 
     sendEmail(emailOptions);
