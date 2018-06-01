@@ -6,7 +6,7 @@ const emailOptionsBuilder = (opts) => {
   const cc = parseEmails(opts.ccEmailAddresses);
 
   let personalizations = {
-    to: parseEmails(opts.toEmailAddresses),
+    to: [{email: opts.toEmailAddress}],
     subject: opts.subject,
   };
 
