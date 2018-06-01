@@ -6,7 +6,7 @@ provider:
   name: aws
   stage: dev
   region: us-west-2
-  runtime: nodejs6.10
+  runtime: nodejs8.10
   memorySize: 128
   deploymentBucket:
     name: sumofus.org.serverless.us-west-2
