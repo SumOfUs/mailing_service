@@ -25,8 +25,14 @@ provider:
       Resource:
         - "arn:aws:dynamodb:*:*:table/${self:provider.environment.MAILINGS_TABLE}"
 functions:
+  notifications:
+    handler: functions/notifications.handler
+    events:
+      - http:
+          method: POST
+          path: mail/notifications
   mailer:
-    handler: functions/mail/index.handler
+    handler: functions/mailer.handler
     events:
       - stream:
           type: dynamodb
