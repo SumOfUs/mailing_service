@@ -37,6 +37,14 @@ const processEvent = (data, cb) => {
     },
   };
 
+  console.log(
+    JSON.stringify(data, null, 2)
+  );
+
+  console.log(
+    JSON.stringify(emailOpts, null, 2)
+  );
+
   sendgrid.
     send(emailOpts).
     then( resp => {
